@@ -59,7 +59,7 @@ export default function Workspace({ language, onBack }: WorkspaceProps) {
         language,
         input: input || undefined,
       });
-      return response as ExecutionResult;
+      return await response.json() as ExecutionResult;
     },
     onSuccess: (result) => {
       setOutput(result.output);
