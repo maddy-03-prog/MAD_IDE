@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SpaceBackground } from "@/components/space-background";
 import { languageConfig, type SupportedLanguage } from "@shared/schema";
-import { Code2, Terminal, Database, Braces, Sparkles } from "lucide-react";
+import { Code2, Terminal, Database, Braces } from "lucide-react";
 import { SiPython, SiCplusplus } from "react-icons/si";
 
 const languageIcons: Record<SupportedLanguage, JSX.Element> = {
@@ -61,25 +61,15 @@ export default function Home({ onSelectLanguage }: HomeProps) {
               <Terminal className="h-7 w-7 text-blue-400" />
               <div className="absolute inset-0 blur-md bg-blue-500/50 -z-10" />
             </div>
-            <div>
-              <h1 className="text-lg font-bold tracking-tight text-white" data-testid="text-app-title">
-                MAD IDE
-              </h1>
-              <p className="text-xs text-blue-300/80">ARCHITECT: MADHAN</p>
-            </div>
+            <h1 className="text-xl font-black tracking-tight text-white" data-testid="text-app-title">
+              MAD IDE
+            </h1>
           </div>
           <ThemeToggle />
         </header>
 
         <main className="flex-1 flex flex-col items-center justify-center p-6">
           <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/30 mb-6">
-              <Sparkles className="h-4 w-4 text-blue-400" />
-              <span className="text-sm font-medium text-blue-300 tracking-widest uppercase">
-                ARCHITECT: MADHAN
-              </span>
-            </div>
-            
             <h2 
               className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent"
               data-testid="text-hero-title"
@@ -166,7 +156,7 @@ export default function Home({ onSelectLanguage }: HomeProps) {
 
         <footer className="h-14 backdrop-blur-md bg-black/30 border-t border-white/10 flex items-center justify-center px-6">
           <p className="text-sm text-gray-500">
-            MAD IDE v1.0 - Built with passion
+            <span className="font-bold">MAD IDE</span> v1.0 - Built with passion
           </p>
         </footer>
       </div>

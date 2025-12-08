@@ -6,6 +6,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { AboutDialog } from "@/components/about-dialog";
+import { AIChatbot } from "@/components/ai-chatbot";
 import { 
   languageConfig, 
   type SupportedLanguage, 
@@ -146,7 +148,7 @@ export default function Workspace({ language, onBack }: WorkspaceProps) {
         style={{ background: `linear-gradient(to right, transparent, ${accentColor}, transparent)` }}
       />
       
-      <header className="h-16 bg-[#12121a] border-b border-white/10 flex items-center justify-between px-4 gap-4 shrink-0">
+      <header className="h-14 bg-[#12121a] border-b border-white/10 flex items-center justify-between px-4 gap-4 shrink-0">
         <div className="flex items-center gap-3">
           <Button
             size="icon"
@@ -165,10 +167,7 @@ export default function Workspace({ language, onBack }: WorkspaceProps) {
                 style={{ background: accentColor, opacity: 0.5 }}
               />
             </div>
-            <div>
-              <h1 className="text-sm font-bold tracking-tight text-white">MAD IDE</h1>
-              <p className="text-xs text-gray-500">ARCHITECT: MADHAN</p>
-            </div>
+            <h1 className="text-base font-black tracking-tight text-white">MAD IDE</h1>
           </div>
         </div>
 
@@ -210,13 +209,14 @@ export default function Workspace({ language, onBack }: WorkspaceProps) {
               </>
             )}
           </Button>
+          <AboutDialog accentColor={accentColor} />
           <ThemeToggle />
         </div>
       </header>
 
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden">
-        <div className="flex-1 lg:w-[65%] flex flex-col min-h-0">
-          <div className="h-10 bg-[#0d0d12] border-b border-white/10 flex items-center px-4 gap-2 shrink-0">
+        <div className="flex-1 lg:flex-[2] flex flex-col min-h-0">
+          <div className="h-9 bg-[#0d0d12] border-b border-white/10 flex items-center px-4 gap-2 shrink-0">
             <FileCode className="h-4 w-4" style={{ color: accentColor }} />
             <span className="text-sm font-medium text-gray-300">main{config.extension}</span>
             <div className="ml-auto flex items-center gap-2">
@@ -232,9 +232,9 @@ export default function Workspace({ language, onBack }: WorkspaceProps) {
               onMount={handleEditorMount}
               theme="vs-dark"
               options={{
-                fontSize: 14,
+                fontSize: 15,
                 fontFamily: "'JetBrains Mono', 'Fira Code', monospace",
-                minimap: { enabled: false },
+                minimap: { enabled: true },
                 scrollBeyondLastLine: false,
                 padding: { top: 16, bottom: 16 },
                 lineNumbers: "on",
@@ -252,9 +252,9 @@ export default function Workspace({ language, onBack }: WorkspaceProps) {
           </div>
         </div>
 
-        <div className="h-[40%] lg:h-full lg:w-[35%] border-t lg:border-t-0 lg:border-l border-white/10 flex flex-col min-h-0 bg-[#0a0a0f]">
+        <div className="h-[45%] lg:h-full lg:flex-1 border-t lg:border-t-0 lg:border-l border-white/10 flex flex-col min-h-0 bg-[#0a0a0f]">
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "output" | "input")} className="flex flex-col h-full">
-            <div className="h-10 border-b border-white/10 flex items-center justify-between px-4 bg-[#0d0d12] shrink-0">
+            <div className="h-9 border-b border-white/10 flex items-center justify-between px-4 bg-[#0d0d12] shrink-0">
               <TabsList className="h-7 bg-white/5">
                 <TabsTrigger 
                   value="output" 
@@ -337,9 +337,9 @@ export default function Workspace({ language, onBack }: WorkspaceProps) {
         </div>
       </div>
 
-      <footer className="h-8 bg-[#0d0d12] border-t border-white/10 flex items-center justify-between px-4 text-xs text-gray-500 shrink-0">
+      <footer className="h-7 bg-[#0d0d12] border-t border-white/10 flex items-center justify-between px-4 text-xs text-gray-500 shrink-0">
         <div className="flex items-center gap-4">
-          <span>MAD IDE v1.0</span>
+          <span className="font-bold">MAD IDE</span> v1.0
           <span className="text-white/20">|</span>
           <span style={{ color: accentColor }}>{config.name}</span>
         </div>
@@ -347,6 +347,8 @@ export default function Workspace({ language, onBack }: WorkspaceProps) {
           <span>UTF-8</span>
         </div>
       </footer>
+
+      <AIChatbot accentColor={accentColor} />
     </div>
   );
 }

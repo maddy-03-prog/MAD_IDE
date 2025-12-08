@@ -7,6 +7,7 @@ import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
 import os from "os";
+import OpenAI from "openai";
 
 const EXECUTION_TIMEOUT = 10000; // 10 seconds
 const MAX_OUTPUT_SIZE = 50000; // 50KB
@@ -301,6 +302,72 @@ export async function registerRoutes(
         error: error.message || "Internal server error",
         exitCode: 1,
         executionTime: 0,
+      });
+    }
+  });
+
+  // AI Chat endpoint
+  app.post("/api/chat", async (req, res) => {
+    try {
+      const { message, history } = req.body;
+
+      if (!message || typeof message !== "string") {
+        return res.status(400).json({ error: "Message is required" });
+      }
+
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({
+          error: "OpenAI API key not configured",
+          response: "The AI assistant is not configured yet. Please ask the administrator to add the OpenAI API key.",
+        });
+      }
+
+      // the newest OpenAI model is "gpt-5" which was released August 7, 2025. do not change this unless explicitly requested by the user
+      const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+      const messages: OpenAI.ChatCompletionMessageParam[] = [
+        {
+          role: "system",
+          content: `You are a helpful AI assistant for MAD IDE, a multi-language code editor. You can help with:
+1. Coding questions in Python, C, C++, Java, and SQL
+2. General knowledge questions
+3. Debugging and explaining code
+4. Programming concepts and best practices
+5. Any other topics the user asks about
+
+Be concise, friendly, and helpful. When providing code examples, format them clearly.`,
+        },
+      ];
+
+      // Add conversation history
+      if (history && Array.isArray(history)) {
+        for (const msg of history.slice(-10)) {
+          if (msg.role === "user" || msg.role === "assistant") {
+            messages.push({
+              role: msg.role,
+              content: msg.content,
+            });
+          }
+        }
+      }
+
+      // Add current message
+      messages.push({ role: "user", content: message });
+
+      const completion = await openai.chat.completions.create({
+        model: "gpt-5",
+        messages,
+        max_completion_tokens: 1024,
+      });
+
+      const response = completion.choices[0]?.message?.content || "I apologize, I couldn't generate a response.";
+
+      res.json({ response });
+    } catch (error: any) {
+      console.error("Chat error:", error);
+      res.status(500).json({
+        error: "Failed to get AI response",
+        response: "Sorry, I encountered an error. Please make sure the AI service is configured correctly.",
       });
     }
   });
