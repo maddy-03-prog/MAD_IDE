@@ -2,12 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
-import { 
-  MessageCircle, 
-  X, 
-  Send, 
-  Loader2, 
-  Bot, 
+import {
+  MessageCircle,
+  X,
+  Send,
+  Loader2,
+  Bot,
   User,
   Sparkles
 } from "lucide-react";
@@ -74,10 +74,16 @@ export function AIChatbot({ accentColor = "#3b82f6" }: AIChatbotProps) {
   };
 
   useEffect(() => {
-    if (scrollRef.current) {
+    // Scroll to bottom whenever messages change
+    // We targeting the viewport element inside ScrollArea usually
+    const scrollContainer = scrollRef.current?.querySelector('[data-radix-scroll-area-viewport]');
+    if (scrollContainer) {
+      scrollContainer.scrollTop = scrollContainer.scrollHeight;
+    } else if (scrollRef.current) {
+      // Fallback for standard divs
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, chatMutation.isPending]); // Also scroll when loading state appears
 
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -91,7 +97,7 @@ export function AIChatbot({ accentColor = "#3b82f6" }: AIChatbotProps) {
         <Button
           onClick={() => setIsOpen(true)}
           className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg z-50"
-          style={{ 
+          style={{
             background: `linear-gradient(135deg, ${accentColor}, ${accentColor}cc)`,
             boxShadow: `0 4px 20px ${accentColor}40`,
           }}
@@ -102,19 +108,19 @@ export function AIChatbot({ accentColor = "#3b82f6" }: AIChatbotProps) {
       )}
 
       {isOpen && (
-        <div 
+        <div
           className="fixed bottom-6 right-6 w-96 h-[500px] bg-[#12121a] border border-white/10 rounded-xl shadow-2xl z-50 flex flex-col overflow-hidden"
           style={{ boxShadow: `0 8px 32px ${accentColor}20` }}
         >
-          <div 
+          <div
             className="h-14 px-4 flex items-center justify-between shrink-0"
-            style={{ 
+            style={{
               background: `linear-gradient(135deg, ${accentColor}30, ${accentColor}10)`,
               borderBottom: `1px solid ${accentColor}30`,
             }}
           >
             <div className="flex items-center gap-2">
-              <div 
+              <div
                 className="h-8 w-8 rounded-full flex items-center justify-center"
                 style={{ background: `${accentColor}30` }}
               >
@@ -143,12 +149,11 @@ export function AIChatbot({ accentColor = "#3b82f6" }: AIChatbotProps) {
                   key={index}
                   className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
                 >
-                  <div 
-                    className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${
-                      message.role === "user" 
-                        ? "bg-white/10" 
+                  <div
+                    className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${message.role === "user"
+                        ? "bg-white/10"
                         : ""
-                    }`}
+                      }`}
                     style={message.role === "assistant" ? { background: `${accentColor}30` } : {}}
                   >
                     {message.role === "user" ? (
@@ -157,13 +162,12 @@ export function AIChatbot({ accentColor = "#3b82f6" }: AIChatbotProps) {
                       <Bot className="h-4 w-4" style={{ color: accentColor }} />
                     )}
                   </div>
-                  <div 
-                    className={`max-w-[75%] px-4 py-2 rounded-xl text-sm ${
-                      message.role === "user"
+                  <div
+                    className={`max-w-[75%] px-4 py-2 rounded-xl text-sm ${message.role === "user"
                         ? "bg-white/10 text-white"
                         : "text-gray-200"
-                    }`}
-                    style={message.role === "assistant" ? { 
+                      }`}
+                    style={message.role === "assistant" ? {
                       background: `${accentColor}15`,
                       border: `1px solid ${accentColor}20`,
                     } : {}}
@@ -172,18 +176,18 @@ export function AIChatbot({ accentColor = "#3b82f6" }: AIChatbotProps) {
                   </div>
                 </div>
               ))}
-              
+
               {chatMutation.isPending && (
                 <div className="flex gap-3">
-                  <div 
+                  <div
                     className="h-8 w-8 rounded-full flex items-center justify-center"
                     style={{ background: `${accentColor}30` }}
                   >
                     <Bot className="h-4 w-4" style={{ color: accentColor }} />
                   </div>
-                  <div 
+                  <div
                     className="px-4 py-2 rounded-xl"
-                    style={{ 
+                    style={{
                       background: `${accentColor}15`,
                       border: `1px solid ${accentColor}20`,
                     }}
@@ -211,7 +215,7 @@ export function AIChatbot({ accentColor = "#3b82f6" }: AIChatbotProps) {
                 disabled={!input.trim() || chatMutation.isPending}
                 size="icon"
                 className="h-11 w-11 shrink-0"
-                style={{ 
+                style={{
                   background: input.trim() ? accentColor : "rgba(255,255,255,0.1)",
                 }}
                 data-testid="button-send-message"
